@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import Card from './Card.vue';
 
 // 試完成以下功能：
 //  1. 點擊卡片，卡片會翻開 (已完成)
@@ -19,14 +20,40 @@ const gameInit = () => {
   openedCard.value = [];
 }
 
-const clickHandler = (idx) => {    
-  openedCard.value.push(idx);
-  
-  // 一秒後將 openedCard 清空 (牌面覆蓋回去)
-  window.setTimeout(() => {
+const clickHandler = (idx) => {
+  // 同張的卡片，則翻回去
+  if(
+    openedCard.value.length === 1 &&
+    openedCard.value.includes(idx)
+  ) {
     openedCard.value = [];
-  }, 1000);
+    return;
+  }
+  // 放入已翻開的卡片
+  openedCard.value = [...openedCard.value, idx];
 }
+
+watch(openedCard, (selectedCards) => {
+  if (selectedCards.length === 2) { // 當選擇兩張卡片時
+    setTimeout(() => { // 等卡片翻開的動畫結束後
+      const [firstCard, secondCard] = selectedCards;
+      if (cards.value[firstCard] === cards.value[secondCard]) { // 當兩張卡片相同時，設定為 0
+        cards.value[firstCard] = 0;
+        cards.value[secondCard] = 0;
+      }
+      // 當所有卡片都消失時，顯示「恭喜破關，再來一局？」的對話框，按下確定後重置遊戲
+      if (
+        cards.value.every(card => card === 0) &&
+        confirm("恭喜破關，再來一局？")
+      ) {
+        gameInit();
+      }
+      // 清除已翻開的卡片
+      openedCard.value = [];
+    }, 1000);
+  }
+});
+
 </script>
 
 <template>
@@ -41,23 +68,16 @@ const clickHandler = (idx) => {
 
     <div class="rounded-xl mx-auto border-4 mt-12 grid grid-flow-col p-10 w-[900px] gap-2 grid-rows-4">
       
-      <div 
+      <Card
         v-for="(n, idx) in cards"
-        class="flip-card"
-        :class="{
-          'open': openedCard.includes(idx)
-        }"
-        @click="clickHandler(idx)">
-        <div class="flip-card-inner" v-if="cards[idx] > 0">
-          <div class="flip-card-front"></div>
-          <div class="flip-card-back">
-            <img :src="`./img/cat-0${n}.jpg`" alt="">
-          </div>
-        </div>
-      </div>
+        :key="idx"
+        :idx="idx"
+        :n="n"
+        :isOpen="openedCard.includes(idx)"
+        :isVisible="cards[idx] > 0"
+        @clickHandler="clickHandler"
+      />
 
     </div>
   </div>
 </template>
-
-<style scoped src="./MatchGame.css"></style>
