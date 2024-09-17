@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import Card from './components/Card.vue';
 
 // 試完成以下功能：
 //  1. 點擊卡片，卡片會翻開 (已完成)
@@ -57,24 +58,15 @@ const checkGameEnd = () => {
     </div>
 
     <div class="rounded-xl mx-auto border-4 mt-12 grid grid-flow-col p-10 w-[900px] gap-2 grid-rows-4">
-
-      <div
+      <Card
         v-for="(n, idx) in cards"
-        class="flip-card"
-        :class="{
-          'open': openedCard.includes(idx)
-        }"
-        @click="clickHandler(idx)">
-        <div class="flip-card-inner" v-if="cards[idx] > 0">
-          <div class="flip-card-front"></div>
-          <div class="flip-card-back">
-            <img :src="`./img/cat-0${n}.jpg`" alt="">
-          </div>
-        </div>
-      </div>
-
+        :cardNumber="n"
+        :isOpen="openedCard.includes(idx)"
+        :isVisible="n > 0"
+        :onClick="() => clickHandler(idx)"
+      />
     </div>
   </div>
 </template>
 
-<style scoped src="./MatchGame.css"></style>
+<style src="./MatchGame.css"></style>
