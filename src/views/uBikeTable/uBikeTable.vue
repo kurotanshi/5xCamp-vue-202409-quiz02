@@ -1,4 +1,5 @@
 <script setup>
+import Search from './components/search.vue';
 import { ref, computed, watch } from 'vue';
 // 修改這份 YouBike 即時資訊表，並加上
 // 1. 站點名稱搜尋
@@ -117,13 +118,16 @@ const keywordsHighlight = (text, keyword) => {
   const reg = new RegExp(keyword, 'gi');
   return text.replace(reg, `<span style="color: red;">${keyword}</span>`);
 };
+
+// 處理搜尋
+const handleSearch = (text) => {
+  searchText.value = text;
+};
 </script>
 
 <template>
   <div class="app">
-    <p class="mb-3">
-      站點名稱搜尋: <input class="border" type="text" v-model="searchText">
-    </p>
+    <Search @search="handleSearch" />
 
     <table class="table table-striped">
       <thead>
