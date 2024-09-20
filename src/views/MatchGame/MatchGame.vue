@@ -10,7 +10,6 @@ import { ref } from 'vue';
 
 const cards = ref([]);
 const openedCard = ref([]);
-const openedCardNum = ref([]); //記牌
 
 // 遊戲初始化，洗牌
 const gameInit = () => {
@@ -20,26 +19,13 @@ const gameInit = () => {
   openedCard.value = [];
 }
 
-const clickHandler = (idx ,n) => {    
-  // openedCard.value= [];
-  // openedCardNum.value= [];
-  console.log(cards.value);
+const clickHandler = (idx) => {    
   openedCard.value.push(idx);
-  openedCardNum.value.push(n);
-  // console.log(n);
-  console.log(openedCardNum.value);
-  // console.log('----------------');
-  if(openedCardNum.value[0]== openedCardNum.value[1]){
-    console.log('一樣!');
-    cards.value[cardNum] = 0;
-  }
+  
   // 一秒後將 openedCard 清空 (牌面覆蓋回去)
-  if(openedCard.value.length == 2){
-    window.setTimeout(() => {
+  window.setTimeout(() => {
     openedCard.value = [];
-    openedCardNum.value = [];
-  }, 1200);
-  }
+  }, 1000);
 }
 </script>
 
@@ -49,7 +35,7 @@ const clickHandler = (idx ,n) => {
     <div class="my-10 text-white text-center ">
       <div class="mb-8 text-5xl">五倍對對碰</div>
       <button 
-        @click.once="gameInit"
+        @click="gameInit"
         class="rounded font-bold bg-blue-500 mx-6 text-white py-2 px-4 hover:bg-blue-700">開始</button>
     </div>
 
@@ -57,14 +43,13 @@ const clickHandler = (idx ,n) => {
       
       <div 
         v-for="(n, idx) in cards"
-        :key="n"
         class="flip-card"
         :class="{
           'open': openedCard.includes(idx)
         }"
-        @click="clickHandler(idx, n)">
+        @click="clickHandler(idx)">
         <div class="flip-card-inner" v-if="cards[idx] > 0">
-          <div class="flip-card-front">{{ n }}</div>
+          <div class="flip-card-front"></div>
           <div class="flip-card-back">
             <img :src="`./img/cat-0${n}.jpg`" alt="">
           </div>
